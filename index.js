@@ -26,6 +26,7 @@ async function run() {
 		const database = client.db("gardeneon");
 		// Tips collection
 		const gardenersCollection = database.collection("gardeners");
+		const testimonialsCollection = database.collection("testimonials");
 		const tipsCollection = database.collection("tips");
 		// Get gardeners from database
 		app.get("/gardeners", async (req, res) => {
@@ -38,6 +39,11 @@ async function run() {
 				.find({ status: "Active" })
 				.toArray();
 			res.send(result);
+		});
+		// Get testimonials from database
+		app.get("/testimonials", async (req, res) => {
+			const cursor = await testimonialsCollection.find().toArray();
+			res.send(cursor);
 		});
 		// Get tips from database
 		app.get("/tips", async (req, res) => {
