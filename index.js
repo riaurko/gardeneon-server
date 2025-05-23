@@ -26,6 +26,11 @@ async function run() {
 		const database = client.db("gardeneon");
 		// Tips collection
 		const tipsCollection = database.collection("tips");
+		// Get tips from database
+		app.get("/tips", async (req, res) => {
+			const cursor = await tipsCollection.find().toArray();
+			res.send(cursor);
+		});
 		// Create new tip in database
 		app.post("/tips", async (req, res) => {
 			const result = await tipsCollection.insertOne(req.body);
