@@ -44,6 +44,11 @@ async function run() {
 			const cursor = await tipsCollection.find().toArray();
 			res.send(cursor);
 		});
+		// Get top 6 tips from database
+		app.get("/tips/top-6", async (req, res) => {
+			const cursor = await tipsCollection.find().limit(6).toArray();
+			res.send(cursor);
+		});
 		// Create new tip in database
 		app.post("/tips", async (req, res) => {
 			const result = await tipsCollection.insertOne(req.body);
