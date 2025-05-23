@@ -25,7 +25,20 @@ async function run() {
 		// Database connection
 		const database = client.db("gardeneon");
 		// Tips collection
+		const gardenersCollection = database.collection("gardeners");
 		const tipsCollection = database.collection("tips");
+		// Get gardeners from database
+		app.get("/gardeners", async (req, res) => {
+			const result = await gardenersCollection.find().toArray();
+			res.send(result);
+		});
+		// Get active gardeners from database
+		app.get("/gardeners/active", async (req, res) => {
+			const result = await gardenersCollection
+				.find({ status: "Active" })
+				.toArray();
+			res.send(result);
+		});
 		// Get tips from database
 		app.get("/tips", async (req, res) => {
 			const cursor = await tipsCollection.find().toArray();
