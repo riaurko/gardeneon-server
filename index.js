@@ -22,6 +22,15 @@ async function run() {
 	try {
 		// Client connection with the server
 		await client.connect();
+		// Database connection
+		const database = client.db("gardeneon");
+		// Tips collection
+		const tipsCollection = database.collection("tips");
+		// Create new tip in database
+		app.post("/tips", async (req, res) => {
+			const result = await tipsCollection.insertOne(req.body);
+			res.send(result);
+		});
 		// Ping for successful connection confirmation
 		await client.db("admin").command({ ping: 1 });
 		console.log("Pinged. Successfully connected to MongoDB.");
