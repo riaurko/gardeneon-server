@@ -23,44 +23,51 @@ const client = new MongoClient(uri, {
 // MongoDB run script
 async function run() {
 	try {
-		// Client connection with the server
+		// Client connection with the server (turn off in deployment)
 		// await client.connect();
-		// Database connection
+		// Database
 		const database = client.db("gardeneon");
-		// Tips collection
+		// Collections
 		const gardenersCollection = database.collection("gardeners");
 		const testimonialsCollection = database.collection("testimonials");
 		const tipsCollection = database.collection("tips");
-		// Get gardeners from database
+		// Get gardeners
 		app.get("/gardeners", async (req, res) => {
-			const result = await gardenersCollection.find().toArray();
-			res.send(result);
+			const cursor = await gardenersCollection.find().toArray();
+			res.send(cursor);
 		});
-		// Get active gardeners from database
+		// Get active gardeners
 		app.get("/gardeners/active", async (req, res) => {
-			const result = await gardenersCollection
+			const cursor = await gardenersCollection
 				.find({ status: "Active" })
 				.toArray();
-			res.send(result);
+			res.send(cursor);
 		});
-		// Get testimonials from database
+		// Get all testimonials
 		app.get("/testimonials", async (req, res) => {
 			const cursor = await testimonialsCollection.find().toArray();
 			res.send(cursor);
 		});
-		// Get tips from database
+		// Get all tips
 		app.get("/tips", async (req, res) => {
 			const cursor = await tipsCollection.find().toArray();
 			res.send(cursor);
 		});
-		// Get top 6 tips from database
+		// Get top 6 tips
 		app.get("/tips/top-6", async (req, res) => {
 			const cursor = await tipsCollection.find().limit(6).toArray();
 			res.send(cursor);
 		});
-		// Create new tip in database
-		app.post("/tips", async (req, res) => {
+		// Create new tip
+		app.post("/tips/create", async (req, res) => {
 			const result = await tipsCollection.insertOne(req.body);
+			res.send(result);
+		});
+		// Delete tip
+		app.delete("/tips/delete/:id", async (req, res) => {
+			const id = req.params.id;
+			const query = { _id: new ObjectId(id) };
+			const result = await tipsCollection.deleteOne(query);
 			res.send(result);
 		});
 		// Ping for successful connection confirmation
