@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5100;
@@ -61,6 +61,17 @@ async function run() {
 		// Create new tip
 		app.post("/tips/create", async (req, res) => {
 			const result = await tipsCollection.insertOne(req.body);
+			res.send(result);
+		});
+		// Update a tip
+		app.put("/tips/update/:id", async (req, res) => {
+			const id = req.params.id;
+			const query = { _id: new ObjectId(id) };
+			const updatedTip = req.body;
+			const updatedDoc = {
+				$set: updatedTip,
+			};
+			const result = await tipsCollection.updateOne(query, updatedDoc);
 			res.send(result);
 		});
 		// Delete tip
