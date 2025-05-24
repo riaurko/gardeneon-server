@@ -1,10 +1,13 @@
+require("dotenv").config();
 const express = require("express");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const cors = require("cors");
-const dotenv = require("dotenv").config;
 const app = express();
 const port = process.env.PORT || 5100;
-dotenv();
+
+// Middlewares
+app.use(express.json());
+app.use(cors());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}.rlegbqz.mongodb.net/?retryWrites=true&w=majority&appName=${process.env.DB_APP_NAME}`;
 
@@ -21,7 +24,7 @@ const client = new MongoClient(uri, {
 async function run() {
 	try {
 		// Client connection with the server
-		await client.connect();
+		// await client.connect();
 		// Database connection
 		const database = client.db("gardeneon");
 		// Tips collection
@@ -68,10 +71,6 @@ async function run() {
 	}
 }
 run().catch(console.dir);
-
-// Middlewares
-app.use(express.json());
-app.use(cors());
 
 // Main page response
 app.get("/", (req, res) => {
