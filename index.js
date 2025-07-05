@@ -1,15 +1,16 @@
-require("dotenv").config();
 const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
+const dotenv = require("dotenv").config;
 const app = express();
 const port = process.env.PORT || 5100;
+dotenv();
 
 // Middlewares
 app.use(express.json());
 app.use(cors());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}.rlegbqz.mongodb.net/?retryWrites=true&w=majority&appName=${process.env.DB_APP_NAME}`;
+const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@professorcluster.rlegbqz.mongodb.net/?retryWrites=true&w=majority&appName=ProfessorCluster`;
 
 // MongoClient with MongoClientOptions object
 const client = new MongoClient(uri, {
@@ -24,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
 	try {
 		// Client connection with the server (turn off in deployment)
-		// await client.connect();
+		await client.connect();
 		// Database
 		const database = client.db("gardeneon");
 		// Collections
@@ -48,20 +49,15 @@ async function run() {
 			const cursor = await testimonialsCollection.find().toArray();
 			res.send(cursor);
 		});
-		// Get all tips
+		// Get all tips or tips based on filtering
 		app.get("/tips", async (req, res) => {
-			const cursor = await tipsCollection.find().toArray();
+			const { gardener_email, difficulty, visibility } = req.query;
+			const query = {};
+			gardener_email ? (query.gardener_email = gardener_email) : query;
+			visibility ? (query.visibility = visibility) : query;
+			difficulty ? (query.difficulty = difficulty) : query;
+			const cursor = await tipsCollection.find(query).toArray();
 			res.send(cursor);
-		});
-		// Get top 6 tips
-		app.get("/tips/top-6", async (req, res) => {
-			const cursor = await tipsCollection.find().limit(6).toArray();
-			res.send(cursor);
-		});
-		// Create new tip
-		app.post("/tips/create", async (req, res) => {
-			const result = await tipsCollection.insertOne(req.body);
-			res.send(result);
 		});
 		// Update a tip
 		app.put("/tips/update/:id", async (req, res) => {
@@ -72,6 +68,16 @@ async function run() {
 				$set: updatedTip,
 			};
 			const result = await tipsCollection.updateOne(query, updatedDoc);
+			res.send(result);
+		});
+		// Get top 6 tips
+		app.get("/tips/top-6", async (req, res) => {
+			const cursor = await tipsCollection.find().limit(6).toArray();
+			res.send(cursor);
+		});
+		// Create new tip
+		app.post("/tips/create", async (req, res) => {
+			const result = await tipsCollection.insertOne(req.body);
 			res.send(result);
 		});
 		// Delete tip
@@ -90,12 +96,11 @@ async function run() {
 }
 run().catch(console.dir);
 
-// Main page response
 app.get("/", (req, res) => {
 	res.send("Gardeneon Server is running groovily!");
 });
 
-// Confirmation for server running
+// Confirm that server is running on which port
 app.listen(port, () => {
 	console.log(`Gardeneon Server is running on Port ${port}`);
 });
