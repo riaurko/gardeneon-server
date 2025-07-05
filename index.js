@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
 	try {
 		// Client connection with the server (turn off in deployment)
-		await client.connect();
+		// await client.connect();
 		// Database
 		const database = client.db("gardeneon");
 		// Collections

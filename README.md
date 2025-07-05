@@ -9,7 +9,7 @@ The goal is to empower garden enthusiasts to learn from each other and grow toge
 
 ---
 
-### 🔗 **Live Website:** [a10-gardeneon.netlify.app](https://a10-gardeneon.netlify.app)
+### 🔗 **Live Server:** [a10-gardeneon-server.vercel.app](https://a10-gardeneon-server.vercel.app)
 
 ---
 
